@@ -2658,6 +2658,28 @@ function uniqueNonEmptyValues(values = []) {
   return unique;
 }
 
+// The fork's caption faces are packaged with the app. Asking the font set to load
+// them up front keeps the first cue of a session from falling back to Arial; on
+// runtimes without the Font Loading API this is a no-op and the CSS stack decides.
+const warmedSubtitleFaceKeys = new Set();
+
+function warmSubtitleFaces(bold) {
+  if (typeof document?.fonts?.load !== "function") {
+    return;
+  }
+  const face = bold ? '500 40px "Netflix Sans"' : '400 40px "Netflix Sans Regular"';
+  if (warmedSubtitleFaceKeys.has(face)) {
+    return;
+  }
+  warmedSubtitleFaceKeys.add(face);
+  try {
+    const load = document.fonts.load(face);
+    load?.catch?.(() => {});
+  } catch (_) {
+    // A failing face simply falls back to Inter/Arial in the CSS stack.
+  }
+}
+
 export const PlayerScreen = {
   async mount(params = {}) {
     streamRepository.setLocalPluginSearchPaused(false);
@@ -10347,7 +10369,14 @@ export const PlayerScreen = {
     const subtitleTextColor = String(style.textColor || "#FFFFFF");
     const subtitleColor = subtitleTextColorWithOpacity(subtitleTextColor, subtitleTextOpacity);
     const outlineColor = String(style.outlineColor || "#000000");
-    const subtitleFontWeight = style.bold ? "800" : Environment.isWebOS() ? "400" : "500";
+    const subtitleFontWeight = style.bold ? "500" : "400";
+    // Fork faces: Medium is the bold state and Regular the thin one, both bundled
+    // in the package ("fonte local, sem consultas externas"). Warming the face
+    // avoids a fallback on the first cue of a session.
+    const subtitleFontFamily = style.bold
+      ? "'Netflix Sans', 'Inter Local', Arial, sans-serif"
+      : "'Netflix Sans Regular', 'Inter Local', Arial, sans-serif";
+    warmSubtitleFaces(style.bold);
     const boldShadow = style.bold
       ? `0.45px 0 0 ${subtitleColor}, -0.45px 0 0 ${subtitleColor}, 0 0.45px 0 ${subtitleColor}, 0 -0.45px 0 ${subtitleColor}`
       : "";
@@ -10378,6 +10407,7 @@ export const PlayerScreen = {
     uiRoot.style.setProperty("--player-subtitle-font-size", `${subtitleFontSize}%`);
     uiRoot.style.setProperty("--player-html-subtitle-font-size", htmlSubtitleFontSize);
     uiRoot.style.setProperty("--player-subtitle-font-weight", subtitleFontWeight);
+    uiRoot.style.setProperty("--player-subtitle-font-family", subtitleFontFamily);
     uiRoot.style.setProperty("--player-subtitle-shadow", subtitleShadow);
     uiRoot.style.setProperty("--player-subtitle-offset", `${verticalOffsetVh.toFixed(2)}vh`);
     video.style.setProperty("--player-subtitle-color", subtitleColor);
@@ -10388,6 +10418,7 @@ export const PlayerScreen = {
     video.style.setProperty("--player-subtitle-outline-color", outlineColor);
     video.style.setProperty("--player-subtitle-font-size", `${subtitleFontSize}%`);
     video.style.setProperty("--player-subtitle-font-weight", subtitleFontWeight);
+    video.style.setProperty("--player-subtitle-font-family", subtitleFontFamily);
     video.style.setProperty("--player-subtitle-shadow", subtitleShadow);
     video.style.setProperty("--player-subtitle-offset", `${residualOffsetVh.toFixed(2)}vh`);
     this.refreshSubtitleCueStyles();

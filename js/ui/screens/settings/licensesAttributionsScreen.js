@@ -5,7 +5,18 @@ import { Router } from "../../navigation/router.js";
 const SECTIONS = [
   {
     titleKey: "licenses_attributions_section_app",
-    items: [["nuvio", "https://github.com/NuvioMedia/NuvioTVSmart"]]
+    items: [
+      ["nuvio", "https://github.com/NuvioMedia/NuvioTVSmart"],
+      // Caption and UI faces shipped inside the package, like the reference fork
+      // ships them in its APK. Netflix Sans has no open licence: it is bundled
+      // because the fork reference bundles it and the user asked for that look.
+      [
+        "Netflix Sans (subtitle face)",
+        "https://www.netflix.com",
+        "proprietary, bundled as in the fork reference"
+      ],
+      ["Inter (UI and fallback face)", "https://github.com/rsms/inter", "OFL-1.1"]
+    ]
   },
   {
     titleKey: "licenses_attributions_section_data",

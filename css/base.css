@@ -1,6 +1,33 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
+/* Local faces, bundled in the package. The reference fork ships them inside the
+   APK (SUBTITLE_FONT.md), and the webOS port kept the rule "fonte local, sem
+   consultas externas": the subtitle face must not depend on the network, and
+   "Inter Local" backs the UI font up when Google Fonts is unreachable on the TV.
+   Netflix Sans Medium is the bold state and Netflix Sans Regular the thin one. */
+@font-face {
+  font-family: "Netflix Sans";
+  src: url("../assets/fonts/NetflixSans-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Netflix Sans Regular";
+  src: url("../assets/fonts/NetflixSans-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: "Inter Local";
+  src: url("../assets/fonts/inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
 :root {
   --bg-color: #0d0d0d;
   --bg-color-rgb: 13 13 13;
@@ -22,7 +49,7 @@
   --focus-color-rgb: 255 255 255;
   --focus-bg: #303030;
   --border-color: #333333;
-  --app-font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  --app-font-family: "Inter", "Inter Local", "Segoe UI", Arial, sans-serif;
   --tv-safe-gutter: 32px;
   --tv-safe-gutter: clamp(28px, 3vw, 56px);
   --tv-safe-gutter-wide: 40px;

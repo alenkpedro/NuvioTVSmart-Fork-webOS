@@ -12794,6 +12794,10 @@ html.legacy-webos .debug-console-log-frame {
   --player-subtitle-font-size: 120%;
   --player-html-subtitle-font-size: clamp(30px, 4.4vh, 82px);
   --player-subtitle-font-weight: 500;
+  /* Fork preset: the subtitle face is the bundled Netflix Sans, not the system
+     font, so the caption looks the same on every TV (pointer overridden by the
+     player when the bold state asks for the Medium or the Regular face). */
+  --player-subtitle-font-family: "Netflix Sans", "Inter Local", Arial, sans-serif;
   --player-subtitle-shadow: 0 0 2px #000000, 0 0 4px #000000;
   --player-subtitle-offset: 0vh;
   --player-controls-x: 32px;
@@ -12807,6 +12811,9 @@ html.legacy-webos .debug-console-log-frame {
   color: var(--player-subtitle-color);
   font-size: var(--player-subtitle-font-size);
   font-weight: var(--player-subtitle-font-weight) !important;
+  /* Best effort: some TV compositors draw the native cues themselves and ignore
+     this, which is why the player renders the same text in its own layer. */
+  font-family: var(--player-subtitle-font-family);
   text-shadow: var(--player-subtitle-shadow);
   background: var(--player-subtitle-background);
 }
@@ -12828,8 +12835,11 @@ html.legacy-webos .debug-console-log-frame {
   inset: 0;
   z-index: 12;
   color: var(--player-subtitle-text-color);
+  font-family: var(--player-subtitle-font-family);
   font-size: var(--player-html-subtitle-font-size);
   font-weight: var(--player-subtitle-font-weight);
+  /* Single-weight faces: never let the TV fake a bold out of the Regular one. */
+  font-synthesis: none;
   line-height: 1.28;
   text-align: center;
   text-shadow: none;
@@ -13080,8 +13090,10 @@ html[data-card-depth="true"][data-card-depth-trailers="true"] .detail-trailer-ca
 
 /* Match Android TV's default caption presentation on LG webOS: regular
    system typography, transparent background, and a crisp outline. */
+/* Match the fork's caption presentation on LG webOS: the bundled Netflix Sans
+   face, transparent background, and a crisp outline. */
 .player-platform-webos #videoPlayer::cue {
-  font-family: "Roboto", Arial, sans-serif;
+  font-family: var(--player-subtitle-font-family);
   background-color: transparent !important;
 }
 
@@ -13089,8 +13101,10 @@ html[data-card-depth="true"][data-card-depth-trailers="true"] .detail-trailer-ca
   background-color: transparent !important;
 }
 
+/* Match the fork's caption presentation on LG webOS: the bundled Netflix Sans
+   face, transparent background, and a crisp outline. */
 .player-platform-webos .player-html-subtitles {
-  font-family: "Roboto", Arial, sans-serif;
+  font-family: var(--player-subtitle-font-family);
   line-height: 1.2;
 }
 
