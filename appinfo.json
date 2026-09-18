@@ -1,6 +1,6 @@
 {
   "id": "org.nuviofork.webos",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "vendor": "Nuvio Fork",
   "type": "web",
   "main": "index.html",

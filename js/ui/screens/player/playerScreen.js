@@ -7423,6 +7423,7 @@ export const PlayerScreen = {
             </div>
 
             <div class="player-controls-bar">
+              <div id="playerControlIcons" class="player-control-icons"></div>
               <div id="playerProgressShell" class="player-progress-shell focusable" tabindex="-1" data-player-pointer-action="progress">
                 <div class="player-progress-track">
                   <div id="playerProgressBuffered" class="player-progress-buffered"></div>
@@ -7511,7 +7512,9 @@ export const PlayerScreen = {
           endsAt: uiRoot.querySelector("#playerEndsAt"),
           progressBuffered: uiRoot.querySelector("#playerProgressBuffered"),
           progressFill: uiRoot.querySelector("#playerProgressFill"),
-          controlButtons: uiRoot.querySelector("#playerControlButtons"),
+          controlButtons: uiRoot.querySelector(".player-controls-bar"),
+          controlIcons: uiRoot.querySelector("#playerControlIcons"),
+          controlCapsules: uiRoot.querySelector("#playerControlButtons"),
           timeLabel: uiRoot.querySelector("#playerTimeLabel"),
           startupErrorButton: uiRoot.querySelector(
             "#playerStartupErrorOverlay .player-startup-error-button"
@@ -11865,12 +11868,15 @@ export const PlayerScreen = {
       return;
     }
     const wrap = this.uiRefs?.controlButtons;
-    if (!wrap) {
+    const iconWrap = this.uiRefs?.controlIcons;
+    const capsuleWrap = this.uiRefs?.controlCapsules;
+    if (!wrap || !iconWrap || !capsuleWrap) {
       return;
     }
 
     if (this.isPostPlayVisible() || this.isPostPlayLoading()) {
-      wrap.innerHTML = "";
+      iconWrap.innerHTML = "";
+      capsuleWrap.innerHTML = "";
       this.renderedControlSignature = "";
       this.syncPlayerOverlayLayoutState();
       return;
@@ -11888,9 +11894,14 @@ export const PlayerScreen = {
     }
     this.controlFocusIndex = clamp(this.controlFocusIndex, 0, Math.max(0, controls.length - 1));
 
-    wrap.innerHTML = controls
-      .map(
-        (control) => `
+    // Fork player bar: the playback capsules (Play/Pause, Next, Restart, Episodes)
+    // stay under the timeline, and the icon group (information, audio, subtitles,
+    // sources, More) goes above it, right aligned — exactly the order of
+    // PlayerControlsOverlay. Both live inside .player-controls-bar, so every
+    // ".player-control-btn" lookup keeps working on the same DOM order.
+    const capsuleActions = new Set(["playPause", "playNextEpisode", "restart", "episodes"]);
+    const isCapsule = (control) => control.primary === true || capsuleActions.has(control.action);
+    const renderControlButton = (control) => `
       <button class="player-control-btn focusable${control.primary ? " is-primary" : ""}"
               data-action="${control.action}"
               title="${escapeHtml(control.title || "")}">
@@ -11902,9 +11913,12 @@ export const PlayerScreen = {
             : `<span class="player-control-label">${escapeHtml(control.label || "")}</span>`
         }
       </button>
-    `
-      )
+    `;
+    iconWrap.innerHTML = controls
+      .filter((control) => !isCapsule(control))
+      .map(renderControlButton)
       .join("");
+    capsuleWrap.innerHTML = controls.filter(isCapsule).map(renderControlButton).join("");
     this.renderedControlSignature = controlRenderSignature;
 
     const buttons = Array.from(wrap.querySelectorAll(".player-control-btn"));
