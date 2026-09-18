@@ -12,6 +12,22 @@
 
 </div>
 
+> **Nuvio Fork (webOS) — este repositório é um fork do app oficial.**
+> Base: [NuvioMedia/NuvioTVSmart](https://github.com/NuvioMedia/NuvioTVSmart) (web app para
+> Tizen e webOS). Aqui entram os recursos do fork Android
+> [ysosrs123/NuvioTV-Fork](https://github.com/ysosrs123/NuvioTV-Fork) que o app oficial
+> ainda não tem — o primeiro é o **buffer de reprodução personalizado**.
+>
+> - Id próprio: **`org.nuviofork.webos`** (com `org.nuviofork.webos.service` e
+>   `org.nuviofork.webos.plugin.service`), título **Nuvio Fork** e versão **1.1.3**, para
+>   conviver com o app oficial instalado. Como o id é o mesmo do port webOS anterior, a
+>   atualização pelo Homebrew Channel substitui aquele 0.31.0.
+> - IPK: [release `webos-v1.1.3`](https://github.com/alenkpedro/NuvioTVSmart-Fork-webOS/releases/tag/webos-v1.1.3)
+>   · índice do Homebrew: `https://raw.githubusercontent.com/alenkpedro/NuvioTV-Fork-webOS/webos/apps.json`
+> - O que falta trazer do fork, com o arquivo de cada item, está em
+>   [`docs/MIGRACAO-FORK-WEBOS.md`](docs/MIGRACAO-FORK-WEBOS.md).
+> - Licença GPL-3.0, como o original.
+
 ## Get Nuvio TV
 
 Nuvio TV supports **Samsung Tizen TVs from 2018 onward (Tizen 4+)** and **LG webOS TVs from 2020 onward (webOS 5+)**.
