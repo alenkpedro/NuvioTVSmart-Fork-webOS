@@ -16,13 +16,13 @@
 > Base: [NuvioMedia/NuvioTVSmart](https://github.com/NuvioMedia/NuvioTVSmart) (web app para
 > Tizen e webOS). Aqui entram os recursos do fork Android
 > [ysosrs123/NuvioTV-Fork](https://github.com/ysosrs123/NuvioTV-Fork) que o app oficial
-> ainda não tem — o primeiro é o **buffer de reprodução personalizado**.
+> ainda não tem: o **buffer de reprodução personalizado** (1.1.3) e o **ranking de fontes com o modo Seleção inteligente** (1.2.0).
 >
 > - Id próprio: **`org.nuviofork.webos`** (com `org.nuviofork.webos.service` e
->   `org.nuviofork.webos.plugin.service`), título **Nuvio Fork** e versão **1.1.3**, para
+>   `org.nuviofork.webos.plugin.service`), título **Nuvio Fork** e versão **1.2.0**, para
 >   conviver com o app oficial instalado. Como o id é o mesmo do port webOS anterior, a
 >   atualização pelo Homebrew Channel substitui aquele 0.31.0.
-> - IPK: [release `webos-v1.1.3`](https://github.com/alenkpedro/NuvioTVSmart-Fork-webOS/releases/tag/webos-v1.1.3)
+> - IPK: [release `webos-v1.2.0`](https://github.com/alenkpedro/NuvioTVSmart-Fork-webOS/releases/tag/webos-v1.2.0)
 >   · índice do Homebrew: `https://raw.githubusercontent.com/alenkpedro/NuvioTV-Fork-webOS/webos/apps.json`
 > - O que falta trazer do fork, com o arquivo de cada item, está em
 >   [`docs/MIGRACAO-FORK-WEBOS.md`](docs/MIGRACAO-FORK-WEBOS.md).
