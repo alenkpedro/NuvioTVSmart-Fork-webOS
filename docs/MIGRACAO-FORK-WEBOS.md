@@ -92,8 +92,9 @@ afirmado com medição na TV.
      continua com os próprios parâmetros (`configureAvPlayBuffering`).
    - `js/ui/screens/settings/settingsScreen.js` + `res/values*/strings.xml` — chave,
      textos em inglês e pt-BR, com as três opções.
-   - `tests/playbackBufferPolicy.test.mjs` (pasta `tests/` é ignorada pelo git do
-     upstream): `node --test tests/playbackBufferPolicy.test.mjs` — 8 testes.
+   - `tests/playbackBufferPolicy.test.mjs` — `node --test tests/playbackBufferPolicy.test.mjs`
+     (8 testes). A pasta `tests/` é ignorada pelo `.gitignore` do upstream; neste
+     fork ela é versionada com `git add -f`.
 2. **Teste de velocidade nas fontes** — medir a fonte real pelo mesmo transporte da
    reprodução (proxy local quando a fonte exigir cabeçalhos) e mostrar taxa e latência
    no cartão da lista, com orçamento pequeno de bytes.
