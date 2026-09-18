@@ -2,7 +2,7 @@
   "name": "nuvio-tv-smart",
   "private": true,
   "type": "module",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "scripts": {
     "build": "node ./scripts/build.mjs",
     "test": "npm run test:plugins",
@@ -23,7 +23,8 @@
     "serve": "node ./scripts/serve.mjs",
     "sync": "node ./scripts/sync-wrapper.mjs",
     "sync:tizen": "node ./scripts/sync-wrapper.mjs --tizen",
-    "sync:webos": "node ./scripts/sync-wrapper.mjs --webos"
+    "sync:webos": "node ./scripts/sync-wrapper.mjs --webos",
+    "env:mirror": "node ./scripts/mirror-official-runtime-env.mjs"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",

@@ -238,6 +238,18 @@ do fork fica ou volta ao do oficial.
    novo ficaram desligadas para não rodar os workflows de Tizen/instaladores do
    upstream; falta um workflow só de webOS (publicar o IPK e atualizar o índice).
 
+## Runtime env: por que o app ficava na tela inicial
+
+O app le `local.properties` (ignorado pelo git) para a configuracao publica de
+backend e integracoes, e cai no `local.example.properties` **vazio** quando o
+arquivo nao existe. Com `NUVIO_SUPABASE_URL` vazio a inicializacao da conta nao
+completa e o app fica parado na tela inicial — foi o que aconteceu no simulador.
+
+Correcao: `npm run env:mirror` (`scripts/mirror-official-runtime-env.mjs`) baixa o
+IPK do release oficial, extrai o `nuvio.env.js` e escreve o `local.properties` com
+as 20 chaves (Supabase, TMDB, Trakt, Simkl, Premiumize, IntroDB, avatares). Rode
+antes do `npm run build`/`package:webos` em um clone novo ou no CI.
+
 ## Validação
 
 - `npm run build` — bundle OK a cada mudança.
