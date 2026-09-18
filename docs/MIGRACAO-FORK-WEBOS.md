@@ -72,12 +72,57 @@ legenda + atraso, temas/AMOLED, MDBList, Trakt e Simkl.
 | 3   | **Miniaturas do seek lendo o quadro do arquivo**                                                                                            | `webos/src/player-thumbnails.js` (porte de `SeekThumbnailEngine`)                                             | Pendente — o oficial mostra só o tempo (`#playerSeekPreview`), sem imagem                     |
 | 4   | **Modo de auto-play "Seleção inteligente"** (4º modo, por ranking do fork)                                                                  | `webos/src/core/auto-play.js`                                                                                 | Pendente — o oficial tem `MANUAL`, `FIRST_STREAM` e `REGEX_MATCH`                             |
 | 5   | **Ranking de fontes do fork** (resolução, qualidade, grupo, vídeo, áudio, canais, encode, tamanho; 31 preferências e 104 grupos preferidos) | `webos/src/core/ranking.js` + `fork-defaults.json` (portes de `StreamQualityRank`/`DirectDebridStreamFilter`) | Pendente — o oficial ordena por fonte (`streamOrdering`) e tem badges, sem nota por qualidade |
-| 6   | **Tela de pausa com arte e elenco**                                                                                                         | `webos/src/player-pause.js` (porte de `PauseOverlay.kt`)                                                      | Verificar na TV o que o `#playerPauseOverlay` do oficial já mostra                            |
-| 7   | **Identidade visual do fork** (rail de categorias, 12 paletas, estilos Minimalista/Barra Superior)                                          | `webos/src/settings-kit.js`, `settings-screen.js`                                                             | Só se o usuário quiser; o oficial tem a própria                                               |
+| 6   | **Fonte fixa Netflix Sans na legenda**                                                                                                      | `webos/src/subtitle-style-editor.js` + `assets/fonts`                                                         | Pendente — o oficial não empacota fonte (usa a do sistema)                                    |
+| 7   | **Transferência de biblioteca** (importar/exportar)                                                                                         | `LibraryTransferFlow.kt` do fork, que nunca chegou ao webOS                                                   | Pendente — não existe no oficial                                                              |
+| 8   | **Identidade visual do fork** (rail de categorias, 12 paletas, estilos Minimalista/Barra Superior)                                          | `webos/src/settings-kit.js`, `settings-screen.js`                                                             | Só se o usuário quiser; o oficial tem a própria                                               |
 
 Regras que continuam válidas para tudo que for trazido do fork: nada de binário ou
 API exclusiva do Android; o que depender de hardware (HDR, passthrough, DV) só é
 afirmado com medição na TV.
+
+## Inventário das melhorias do antigo (0.1 → 0.31) contra a base oficial
+
+Tudo que o port antigo entregou, item por item, conferido por busca no código do
+aplicativo oficial. `✔` já existe lá, `◑` existe em parte, `✗` falta, `—` é decisão de
+produto (identidade visual).
+
+| Versão    | Melhoria do projeto antigo                                                                                                           | Na base oficial                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| 0.2–0.4   | Layout do fork reconstruído (Modern/Clássico, menu flutuante/oculto, metadados do destaque, detalhes/episódios, restauração de foco) | ✔ `modernHomeLayout.js`, sidebar, `metaDetailsScreen`, foco restaurado                                                  |
+| 0.5       | Fontes com filtro/atualização/retorno, painéis de áudio, legendas externas SRT/VTT                                                   | ✔ `streamScreen` (chips por fonte), `audioTrackCodecMetadata`, `subtitleText`                                           |
+| 0.6       | Perfis/PIN, addons próprios/herdados, biblioteca da conta, isolamento por perfil                                                     | ✔ `profileSelectionScreen` (PIN), `profileScopedStore`, `savedLibraryStore`                                             |
+| 0.7–0.8   | Histórico nativo por perfil, retomada, fila de envio, conflitos                                                                      | ✔ `watchProgressStore`, `watchProgressSyncService`, `js/core/sync`                                                      |
+| 0.9       | Descobrir, filtros, busca, recentes por perfil                                                                                       | ✔ `screens/search`, `screens/catalog`, `js/core/tmdb`                                                                   |
+| 0.10      | Elenco/pessoa/filmografia, recomendações TMDB, trailers                                                                              | ✔ `tmdbMetadataService`, trailer no app pelo `docs/youtube-proxy.html`                                                  |
+| 0.11      | Coleções/franquias TMDB, avaliações MDBList                                                                                          | ✔ `tmdbMetadataService`, `mdbListSettingsStore`, `metaDetailsScreen`                                                    |
+| 0.12      | Idiomas principal/secundário, próximo episódio                                                                                       | ✔ `playerNextEpisodeRules`, preferências de idioma                                                                      |
+| 0.13      | Legenda forçada/SDH, filtro por idioma, memória de faixas por título/perfil                                                          | ✔ `trackPreferencesStore`, `subtitleStyle` (idiomas preferidos)                                                         |
+| 0.14      | Velocidade, relógio no OSD, continuidade                                                                                             | ✔ `playerScrubRates`, `osdClockEnabled`, `stillWatching*`                                                               |
+| 0.15      | Episódios no player, sete proporções de imagem                                                                                       | ✔ painel de episódios no `playerScreen`, `ASPECT_MODE_IDS`                                                              |
+| 0.16      | Barra do player do fork (Mais, Fontes, Informação, Voltar recolhe controles)                                                         | ✔ barra própria do oficial (mesma linhagem Android)                                                                     |
+| 0.17      | Painéis de áudio/legenda, atraso até ±180 s, sincronizar por fala                                                                    | ✔ `subtitleAutoSync`, `subtitleDelayPreferencesStore`                                                                   |
+| 0.18      | Tela de pausa com arte, sinopse e elenco                                                                                             | ✔ `#playerPauseOverlay` (logo/título/ano/episódio/sinopse/elenco) — mais completa que a do antigo                       |
+| 0.19      | Editor de legenda (tamanho/negrito/cor/opacidade/contorno/posição), Pular introduções, auto-skip                                     | ✔ `subtitleStyle`, `skipIntroRepository` (IntroDB), `autoSkipSegmentTypes`                                              |
+| 0.19      | Miniaturas do trecho lendo o quadro do próprio arquivo                                                                               | ✗ falta (só o tempo no `#playerSeekPreview`)                                                                            |
+| 0.19      | Netflix Sans fixa na legenda                                                                                                         | ✗ falta (nenhuma fonte empacotada)                                                                                      |
+| 0.20      | Ajustes no estilo do fork (rail de dez categorias, 12 paletas, AMOLED, estilos Minimalista/Barra Superior)                           | — identidade visual; o oficial tem `settingsScreen.js` (8,3 mil linhas) com a própria organização                       |
+| 0.21      | Guia parental e recomendações pós-reprodução                                                                                         | ✔ `parentalGuideRepository`, `postPlayRecommendationController`                                                         |
+| 0.22      | Quatro modos de auto-play, cache do último link, trailer automático                                                                  | ◑ `MANUAL`/`FIRST_STREAM`/`REGEX_MATCH` + cache (`streamReuseLastLinkCacheHours`) + trailer ✔; falta o modo por ranking |
+| 0.23      | Buffer personalizado (5 s / 3 s / limite 20 s)                                                                                       | ✔ feito nesta base (rodada 1)                                                                                           |
+| 0.23      | Teste de velocidade na lista de fontes                                                                                               | ✗ falta                                                                                                                 |
+| 0.24/0.30 | Coleções com pastas, fontes de add-on e TMDB, fixar no topo, grade e abas                                                            | ✔ `collectionsStore` (tem `pinToTop`) e telas de coleção                                                                |
+| 0.25      | Ajustes de foco, Voltar visível na lista de fontes, segurar OK em Continuar assistindo                                               | ✔ provável (foco/`handlesRelaunch`); conferir na TV                                                                     |
+| 0.26–0.27 | Fonte fina de legenda, miniaturas 4K, ordem dos add-ons                                                                              | ◑ ordem dos add-ons ✔ (`streamOrdering`); miniatura ✗                                                                   |
+| 0.28–0.29 | Telas de carregamento do fork, esqueleto por fileira, Home focando a primeira fileira, add-ons sendo consultados                     | ✔ `skeleton` na Home e nas fontes, overlay de carregamento, `sourceChips`/`hasPendingSourceLoads`; miniatura ✗          |
+| 0.31      | Trailer dentro do app e serviço de rede local (cabeçalhos, sem CORS)                                                                 | ✔ `docs/youtube-proxy.html`, `services/webos` (proxy 2710/2711 + `plugin-http.cjs`)                                     |
+| —         | Ranking do fork (`StreamQualityRank`/`DirectDebridStreamFilter`, 31 preferências e 104 grupos)                                       | ✗ falta (o oficial ordena por fonte e usa badges)                                                                       |
+| —         | Transferência de biblioteca                                                                                                          | ✗ falta                                                                                                                 |
+| —         | Avaliação do dispositivo (`DeviceAssessmentEngine`)                                                                                  | ✗ nunca foi concluída nem no antigo; seguia pendente no roteiro                                                         |
+
+Resumo: **das melhorias do antigo, falta trazer cinco itens** — teste de velocidade,
+miniaturas do seek, modo de auto-play por ranking, ranking do fork e transferência de
+biblioteca — além da fonte Netflix Sans (visual) e da identidade dos Ajustes (decisão
+do usuário).
 
 ## Rodadas
 
@@ -103,10 +148,12 @@ afirmado com medição na TV.
 4. **Ranking e seleção automática do fork** — portar `ranking.js` (e os padrões de
    `fork-defaults.json`) para dentro de `js/core/streams/`, ligar no
    `streamAutoPlaySelector` como quarto modo e expor o ordenamento na lista.
-5. **Pausa com arte/elenco** — comparar `#playerPauseOverlay` com `PauseOverlay.kt` e
-   fechar as diferenças.
-6. **Publicação** — fork próprio no GitHub, `appinfo.json` com id próprio para
-   conviver com o app oficial instalado, workflow de IPK e `apps.json` para o Homebrew.
+5. **Fonte Netflix Sans nas legendas** — empacotar a face usada pelo antigo e ligá-la ao
+   `subtitleStyle`, já que o oficial não traz fonte própria (item visual pedido pelo usuário).
+6. **Identidade e publicação** — **feito**: o app agora é `org.nuviofork.webos` 1.1.3
+   (`org.nuviofork.webos.service` e `.plugin.service`), com título e fornecedor
+   “Nuvio Fork”, convivendo com o app oficial instalado. Falta: fork próprio no GitHub,
+   workflow de IPK e `apps.json` do Homebrew apontando para o novo pacote.
 
 ## Validação
 
