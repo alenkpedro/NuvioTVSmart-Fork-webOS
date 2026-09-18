@@ -26066,3 +26066,37 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
   padding: var(--player-fork-panel-padding);
   background: rgba(0, 0, 0, 0.85);
 }
+
+/* Scrims: the fork keeps 150dp above and 200dp below the bar (300px/400px here),
+   while the official used the dp number as px, which reads as a thin band. */
+#playerUiRoot .player-controls-gradient-top {
+  height: min(15.63vw, 300px); /* ATV 150dp -> 300px */
+}
+
+#playerUiRoot .player-controls-gradient-bottom {
+  height: min(20.83vw, 400px); /* ATV 200dp -> 400px */
+}
+
+/* The fork's timeline is a slider: the thumb (12dp -> 24px) only shows up while the
+   bar has focus, so the track has to stop clipping it in that state. */
+#playerUiRoot .player-progress-shell.focused .player-progress-track {
+  overflow: visible;
+}
+
+#playerUiRoot .player-progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(min(0.625vw, 12px) * -1); /* ATV thumb 12dp -> 24px, centred on the playhead */
+  width: min(1.25vw, 24px);
+  height: min(1.25vw, 24px);
+  border-radius: 50%;
+  background: var(--player-secondary);
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 120ms ease;
+}
+
+#playerUiRoot .player-progress-shell.focused .player-progress-fill::after {
+  opacity: 1;
+}
