@@ -156,6 +156,26 @@ difere são **valores medidos** — sobretudo a margem inferior, o tamanho do pa
 fontes e o ícone das cápsulas. Ajustar esses valores é a próxima rodada do design, e
 cada troca precisa de conferência na TV (é aparência, não regra).
 
+### Feito na rodada do design (1.4.0)
+
+Bloco `#playerUiRoot` no fim de `css/components.css`, com os valores do fork em
+dp/sp convertidos x2 (o arquivo já usava essa convenção):
+
+- Margem inferior da barra **48 dp -> 96 px** (estava 24 dp).
+- Icone das capsulas **28 dp -> 56 px** (estava 24 dp).
+- Titulo **24 sp semibold -> 48 px/600** e episodio **16 sp -> 32 px/500**.
+- Linha do tempo focada **8 dp -> 16 px** (estava 10 dp).
+- Painel de fontes/episodios dentro do player **440 dp -> 880 px**, padding
+  **16 dp -> 32 px** e fundo **preto 85%** (estava 520 px, padding 24 px e fundo
+  elevado).
+
+Falta do design, para a proxima rodada (precisa identificar o elemento exato de
+cada um no DOM do oficial): gradientes **topo 150 dp -> 300 px** e **base 200 dp
+-> 400 px**; paineis de audio/legenda **320 dp -> 640 px** com raio **40 px**;
+painel de estatisticas **380 dp -> 760 px**; marcador da linha do tempo **12 dp
+-> 24 px**; e a conferencia dos paineis/controles na TV, que decide se o valor
+do fork fica ou volta ao do oficial.
+
 ## Rodadas
 
 1. **Buffer e rede (feito nesta rodada)**

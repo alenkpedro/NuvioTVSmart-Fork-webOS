@@ -26022,3 +26022,47 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
     transition-duration: 1ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Fork player design.
+
+   The values below are the fork PlayerScreen.kt measurements transcribed by the
+   webOS port (its PLAYER_PARITY.md): bar bottom margin 48dp, icon 28dp, title
+   24sp semibold, episode 16sp medium, focused timeline 8dp, and the
+   StreamSourcesSidePanel/EpisodeListPanel at 440dp with 16dp padding over black
+   85%. The official canvas is 1920x1080, so the same x2 conversion used above in
+   this file applies ("ATV 32dp -> 64px"). Scoped to #playerUiRoot so it wins over
+   the legacy and media-query blocks without touching anything outside the player.
+   --------------------------------------------------------------------------- */
+#playerUiRoot {
+  --player-control-icon: min(2.92vw, 56px); /* ATV 28dp -> 56px (fork icon) */
+  --player-controls-bottom: min(5vw, 96px); /* ATV 48dp -> 96px (fork bar bottom) */
+  --player-fork-panel-width: min(45.83vw, 880px); /* ATV 440dp -> 880px */
+  --player-fork-panel-padding: min(1.67vw, 32px); /* ATV 16dp -> 32px */
+}
+
+#playerUiRoot .player-controls-overlay {
+  padding-bottom: var(--player-controls-bottom);
+}
+
+#playerUiRoot .player-title {
+  font-size: min(2.5vw, 48px); /* ATV 24sp -> 48px */
+  font-weight: 600;
+}
+
+#playerUiRoot .player-subtitle {
+  font-size: min(1.67vw, 32px); /* ATV 16sp -> 32px */
+  font-weight: 500;
+}
+
+#playerUiRoot .player-progress-shell.focused .player-progress-track {
+  height: min(0.833vw, 16px); /* ATV focused 8dp -> 16px (fork) */
+}
+
+/* StreamSourcesSidePanel / EpisodeListPanel: 440dp wide, 16dp padding, black 85%. */
+#playerUiRoot .player-sources-panel,
+#playerUiRoot .player-episode-panel {
+  width: var(--player-fork-panel-width);
+  padding: var(--player-fork-panel-padding);
+  background: rgba(0, 0, 0, 0.85);
+}
