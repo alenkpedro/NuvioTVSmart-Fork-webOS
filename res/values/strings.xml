@@ -2977,4 +2977,11 @@
     <string name="playback_buffer_initial_title">Buffer before playback</string>
     <string name="playback_buffer_rebuffer_title">Buffer after a stall</string>
     <string name="playback_buffer_timeout_title">Buffer wait limit</string>
+    <string name="playback_stream_speed_test">Test source speed</string>
+    <string name="playback_stream_speed_test_sub">Measure the first sources when a list opens and show the rate and latency on each card.</string>
+    <string name="streams_speed_test">Speed test</string>
+    <string name="streams_speed_not_direct">Direct link only</string>
+    <string name="streams_speed_timeout">No answer</string>
+    <string name="streams_speed_empty">No bytes</string>
+    <string name="streams_speed_network">Network failure</string>
 </resources>

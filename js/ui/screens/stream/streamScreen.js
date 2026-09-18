@@ -59,6 +59,11 @@ import {
   normalizeStreamBadgeRules
 } from "../../../core/streams/streamBadgeRules.js";
 import { normalizeMathematicalAlphanumericSymbols } from "../../../core/streams/streamDisplayText.js";
+import {
+  SPEED_BUDGET,
+  isMeasurableUrl,
+  measureStreamSpeeds
+} from "../../../core/network/streamSpeedTester.js";
 import { renderLoadingIndicator } from "../../components/loadingIndicator.js";
 import {
   buildStreamVirtualModel,
@@ -615,6 +620,42 @@ function renderImportedStreamBadgeChips(stream = {}, badges = [], showFileSizeBa
     : "";
 }
 
+// Speed test of the fork (core/network/StreamSpeedTester.kt): the measurement is
+// keyed by the resolved URL, so the same source keeps its chip while the list is
+// re-rendered, and numbers are shown in the same shape the fork used.
+const streamSpeedKey = (stream = {}) =>
+  String(stream.url || stream.externalUrl || stream.id || stream.infoHash || "").trim();
+
+const formatSpeedMbps = (mbps) => {
+  const value = Number(mbps);
+  if (!Number.isFinite(value) || value <= 0) {
+    return "";
+  }
+  return `${value.toFixed(value >= 10 ? 0 : 1).replace(".", ",")} Mbps`;
+};
+
+const formatSpeedLatency = (latencyMs) => {
+  const value = Number(latencyMs);
+  return Number.isFinite(value) && value >= 0 ? `${Math.round(value)} ms` : "";
+};
+
+function streamSpeedFailureLabel(failure, t) {
+  const reason = String(failure || "");
+  if (reason === "not-http") {
+    return t("streams_speed_not_direct", {}, "Direct link only");
+  }
+  if (reason === "timeout") {
+    return t("streams_speed_timeout", {}, "No answer");
+  }
+  if (reason === "empty" || reason === "no-body") {
+    return t("streams_speed_empty", {}, "No bytes");
+  }
+  if (reason.startsWith("http-")) {
+    return reason.toUpperCase().replace("HTTP-", "HTTP ");
+  }
+  return t("streams_speed_network", {}, "Network failure");
+}
+
 function renderStreamBadges(stream = {}, enabled = true, badgeSettings = null) {
   if (!enabled) {
     return "";
@@ -840,6 +881,7 @@ export const StreamScreen = {
       preferredIndex
     });
     this.streamVirtualWindow = virtualWindow;
+    this.maybeRunStreamSpeedTest();
     const cards = [];
     for (let index = virtualWindow.start; index <= virtualWindow.end; index += 1) {
       cards.push(
@@ -1362,6 +1404,9 @@ export const StreamScreen = {
     this.loading = true;
     this.streamSearchCompleted = false;
     this.streams = [];
+    this.streamSpeedResults = new Map();
+    this.streamSpeedRunKey = "";
+    this.streamSpeedRunToken = 0;
     this.sourceChips = [];
     this.addonLogoLookup = {};
     this.addonFilter = "all";
@@ -2971,6 +3016,74 @@ export const StreamScreen = {
     `;
   },
 
+  renderStreamSpeedChip(stream = {}) {
+    const result = this.streamSpeedResults?.get?.(streamSpeedKey(stream));
+    if (!result) {
+      return "";
+    }
+    const label = result.ok
+      ? [
+          `${result.approximate ? "~" : ""}${formatSpeedMbps(result.mbps)}`,
+          formatSpeedLatency(result.latencyMs)
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : streamSpeedFailureLabel(result.failure, (key, params, fallback) =>
+          t(key, params, fallback)
+        );
+    if (!label) {
+      return "";
+    }
+    return `<span class="stream-route-stream-badge speed">${escapeHtml(label)}</span>`;
+  },
+
+  // Runs once per list shape, and only when the user asked for it: the fork's
+  // budget is small (4 sources, 2 MB each) but it is still real traffic.
+  maybeRunStreamSpeedTest() {
+    if (PlayerSettingsStore.get().streamSpeedTestEnabled !== true) {
+      return;
+    }
+    const list = Array.isArray(this.streams) ? this.streams : [];
+    if (!list.length) {
+      return;
+    }
+    const key = `${list.length}|${streamSpeedKey(list[0])}|${streamSpeedKey(list[list.length - 1])}`;
+    if (this.streamSpeedRunKey === key) {
+      return;
+    }
+    this.streamSpeedRunKey = key;
+    void this.runStreamSpeedTest(list);
+  },
+
+  async runStreamSpeedTest(streams = []) {
+    const seen = new Set();
+    const entries = [];
+    (Array.isArray(streams) ? streams : []).forEach((stream) => {
+      const key = streamSpeedKey(stream);
+      const url = String(stream?.url || "").trim();
+      if (!key || seen.has(key) || !isMeasurableUrl(url)) {
+        return;
+      }
+      seen.add(key);
+      entries.push({ key, url });
+    });
+    if (!entries.length) {
+      return;
+    }
+    const token = Number(this.streamSpeedRunToken || 0) + 1;
+    this.streamSpeedRunToken = token;
+    await measureStreamSpeeds(entries, {
+      budget: SPEED_BUDGET,
+      onResult: (key, result) => {
+        if (token !== this.streamSpeedRunToken) {
+          return;
+        }
+        this.streamSpeedResults.set(key, result);
+        this.requestRender({ delayMs: 80 });
+      }
+    });
+  },
+
   renderStreamCard(
     stream,
     index,
@@ -2988,8 +3101,15 @@ export const StreamScreen = {
       : renderStreamBadges(stream, streamBadgesEnabled, badgeSettings);
     const showAddonLogo = badgeSettings?.showAddonLogo === true;
     const badgePlacement = resolveStreamBadgePlacement(badgeSettings);
-    const topBadges = badgePlacement === "TOP" ? badges : "";
-    const bottomBadges = badgePlacement === "BOTTOM" ? badges : "";
+    // The speed chip follows the badges slot (top by default) and, when the badges
+    // themselves are hidden or absent, still has a container of its own.
+    const speedBadge = this.renderStreamSpeedChip(stream);
+    const speedBlock = speedBadge
+      ? `<div class="stream-route-card-badges" aria-label="${escapeHtml(t("streams_speed_test", {}, "Speed test"))}">${speedBadge}</div>`
+      : "";
+    const badgesInTop = badgePlacement !== "BOTTOM";
+    const topBadges = (badgesInTop ? badges : "") + (badgesInTop ? speedBlock : "");
+    const bottomBadges = (badgesInTop ? "" : badges) + (badgesInTop ? "" : speedBlock);
     const descriptionLines = getStreamDescriptionLines(stream);
     let addonIdentity = "";
     if (showAddonLogo) {

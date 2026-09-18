@@ -5900,6 +5900,7 @@ export const SettingsScreen = {
     togglePlayerSetting("playback:loadingStatus", "showPlayerLoadingStatus");
     togglePlayerSetting("playback:minimalBufferingUi", "minimalBufferingUiEnabled");
     togglePlayerSetting("playback:customBuffer", "customBufferEnabled");
+    togglePlayerSetting("playback:streamSpeedTest", "streamSpeedTestEnabled");
     this.actionMap.set("playback:bufferInitial", () =>
       this.openOptionDialog({
         title: t("playback_buffer_initial_title", {}, "Buffer before playback"),
@@ -6523,6 +6524,16 @@ export const SettingsScreen = {
         ${this.renderToggleRow({ focusKey: "playback:loadingOverlay", title: t("playback_loading_overlay"), subtitle: t("playback_loading_overlay_sub"), checked: model.player.loadingOverlayEnabled !== false })}
         ${this.renderToggleRow({ focusKey: "playback:loadingStatus", title: t("playback_show_loading_status", {}, "Detailed loading status"), subtitle: t("playback_show_loading_status_sub", {}, "Show detailed player loading progress"), checked: model.player.showPlayerLoadingStatus !== false })}
         ${Platform.isWebOS() ? this.renderToggleRow({ focusKey: "playback:minimalBufferingUi", title: t("playback_minimal_buffering_ui", {}, "Minimal buffering UI"), subtitle: t("playback_minimal_buffering_ui_sub", {}, "Show only the spinner when playback buffers after it has started"), checked: Boolean(model.player.minimalBufferingUiEnabled) }) : ""}
+        ${this.renderToggleRow({
+          focusKey: "playback:streamSpeedTest",
+          title: t("playback_stream_speed_test", {}, "Test source speed"),
+          subtitle: t(
+            "playback_stream_speed_test_sub",
+            {},
+            "Measure the first sources when a list opens and show the rate and latency on each card."
+          ),
+          checked: Boolean(model.player.streamSpeedTestEnabled)
+        })}
         ${this.renderToggleRow({
           focusKey: "playback:customBuffer",
           title: t("playback_custom_buffer", {}, "Custom playback buffer"),

@@ -2857,4 +2857,11 @@
     <string name="playback_buffer_initial_title">Buffer antes de reproduzir</string>
     <string name="playback_buffer_rebuffer_title">Buffer após travamento</string>
     <string name="playback_buffer_timeout_title">Limite de espera do buffer</string>
+    <string name="playback_stream_speed_test">Testar velocidade das fontes</string>
+    <string name="playback_stream_speed_test_sub">Mede as primeiras fontes ao abrir a lista e mostra taxa e latência em cada cartão.</string>
+    <string name="streams_speed_test">Teste de velocidade</string>
+    <string name="streams_speed_not_direct">Só link direto</string>
+    <string name="streams_speed_timeout">Sem resposta</string>
+    <string name="streams_speed_empty">Nenhum byte</string>
+    <string name="streams_speed_network">Falha de rede</string>
 </resources>

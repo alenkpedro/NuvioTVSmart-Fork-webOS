@@ -46,6 +46,9 @@ const DEFAULTS = {
   bufferInitialSeconds: BUFFER_INITIAL_SECONDS_DEFAULT,
   bufferAfterRebufferSeconds: BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT,
   bufferWaitTimeoutSeconds: BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT,
+  // Fork speed test (StreamSpeedTester): off by default, because it is real
+  // traffic on the sources when a list opens.
+  streamSpeedTestEnabled: false,
   pauseOverlayEnabled: true,
   parentalGuideEnabled: true,
   autoSkipSegmentTypes: [],
@@ -323,6 +326,9 @@ export function normalizePlayerSettings(settings = {}) {
     bufferWaitTimeoutSeconds: normalizeBufferWaitTimeoutSeconds(
       persistentSettings.bufferWaitTimeoutSeconds,
       BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT
+    ),
+    streamSpeedTestEnabled: Boolean(
+      persistentSettings.streamSpeedTestEnabled ?? DEFAULTS.streamSpeedTestEnabled
     ),
     pauseOverlayEnabled: persistentSettings.pauseOverlayEnabled !== false,
     parentalGuideEnabled: persistentSettings.parentalGuideEnabled !== false,

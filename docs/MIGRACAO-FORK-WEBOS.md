@@ -192,9 +192,18 @@ do fork fica ou volta ao do oficial.
    - `tests/playbackBufferPolicy.test.mjs` — `node --test tests/playbackBufferPolicy.test.mjs`
      (8 testes). A pasta `tests/` é ignorada pelo `.gitignore` do upstream; neste
      fork ela é versionada com `git add -f`.
-2. **Teste de velocidade nas fontes** — medir a fonte real pelo mesmo transporte da
-   reprodução (proxy local quando a fonte exigir cabeçalhos) e mostrar taxa e latência
-   no cartão da lista, com orçamento pequeno de bytes.
+2. **Teste de velocidade nas fontes — feito (1.5.0).**
+   - `js/core/network/streamSpeedTester.js` — orcamento do fork (aquecimento de
+     256 KB, 2 MB medidos, janela de 0,8-4 s, 8 s de limite, ate 4 fontes, 2 por vez),
+     taxas por sub-janela, medicao cancelavel e falhas como resultado (nunca excecao).
+   - `js/ui/screens/stream/streamScreen.js` — chip no cartao com a taxa e a latencia
+     (`9,4 Mbps · 230 ms`), medindo as primeiras fontes quando a lista abre.
+   - `streamSpeedTestEnabled` (padrao **desligado**, porque e trafego real) em
+     Ajustes -> Reproducao -> Testar velocidade das fontes; textos pt-BR/ingles.
+   - `tests/streamSpeedTester.test.mjs` — 8 testes (aritmetica, cabecalho Range,
+     aquecimento/orcamento, corpo em bloco unico, falhas e limite de fontes).
+     reprodução (proxy local quando a fonte exigir cabeçalhos) e mostrar taxa e latência
+     no cartão da lista, com orçamento pequeno de bytes.
 3. **Miniaturas do seek** — ler o quadro do próprio arquivo sob demanda para o
    `playerSeekPreview`, com cache limitado e desligado quando a TV não permitir.
 4. **Ranking e seleção automática do fork — feito.**
