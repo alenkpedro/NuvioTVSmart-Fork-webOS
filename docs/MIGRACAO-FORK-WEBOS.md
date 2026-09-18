@@ -150,10 +150,17 @@ do usuário).
    `streamAutoPlaySelector` como quarto modo e expor o ordenamento na lista.
 5. **Fonte Netflix Sans nas legendas** — empacotar a face usada pelo antigo e ligá-la ao
    `subtitleStyle`, já que o oficial não traz fonte própria (item visual pedido pelo usuário).
-6. **Identidade e publicação** — **feito**: o app agora é `org.nuviofork.webos` 1.1.3
+6. **Identidade e publicação — feito.** O app é `org.nuviofork.webos` **1.1.3**
    (`org.nuviofork.webos.service` e `.plugin.service`), com título e fornecedor
-   “Nuvio Fork”, convivendo com o app oficial instalado. Falta: fork próprio no GitHub,
-   workflow de IPK e `apps.json` do Homebrew apontando para o novo pacote.
+   “Nuvio Fork”, convivendo com o app oficial instalado. Código em
+   `alenkpedro/NuvioTVSmart-Fork-webOS` (base `fcac952` + estes commits), release
+   `webos-v1.1.3` com `org.nuviofork.webos_1.1.3_all.ipk`,
+   e o índice do Homebrew que a TV já usa (`alenkpedro/NuvioTV-Fork-webOS@webos`,
+   arquivo `apps.json`) aponta para 1.1.3 com o SHA-256 `f60f2a9d…6153` (5.455.914
+   bytes). Como o id é o mesmo do port antigo, a atualização pelo Homebrew
+   **substitui** o 0.31.0 na TV, sem tocar no app oficial. As Actions do repositório
+   novo ficaram desligadas para não rodar os workflows de Tizen/instaladores do
+   upstream; falta um workflow só de webOS (publicar o IPK e atualizar o índice).
 
 ## Validação
 
