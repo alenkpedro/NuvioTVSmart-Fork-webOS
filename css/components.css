@@ -26041,6 +26041,12 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
   --player-controls-bottom: min(5vw, 96px); /* ATV 48dp -> 96px (fork bar bottom) */
   --player-fork-panel-width: min(45.83vw, 880px); /* ATV 440dp -> 880px */
   --player-fork-panel-padding: min(1.67vw, 32px); /* ATV 16dp -> 32px */
+  /* Fork player identity: white on black. The app themes the player accent with the
+     selected palette (the red in the screenshot), while the fork keeps #fff for the
+     playhead, the buffered bar and the focused thumb. */
+  --player-secondary: #ffffff;
+  --player-accent-gradient: linear-gradient(90deg, #ffffff);
+  --player-atv-primary: #ffffff;
 }
 
 #playerUiRoot .player-controls-overlay {
@@ -26111,6 +26117,15 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
   display: flex;
   flex-direction: column;
   gap: min(1.25vw, 24px); /* ATV 12dp -> 24px */
+}
+
+/* Fork bar order: the clock/“ends at” row and the icon group sit above the timeline,
+   both right aligned (PlayerControlsOverlay), the capsules stay below it. */
+#playerUiRoot .player-controls-bar .player-controls-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: min(0.83vw, 16px);
 }
 
 #playerUiRoot .player-control-icons {

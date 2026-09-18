@@ -7410,11 +7410,6 @@ export const PlayerScreen = {
           <div class="player-controls-gradient player-controls-gradient-top"></div>
           <div class="player-controls-gradient player-controls-gradient-bottom"></div>
 
-          <div class="player-controls-top${osdClockEnabled ? "" : " hidden"}">
-            <div id="playerClock" class="player-clock">--:--</div>
-            <div id="playerEndsAt" class="player-ends-at">${escapeHtml(t("player_ends_at", ["--:--"], "Ends at %1$s"))}</div>
-          </div>
-
           <div class="player-controls-bottom">
             <div class="player-meta">
               <div class="player-title">${escapeHtml(header.title)}</div>
@@ -7423,6 +7418,10 @@ export const PlayerScreen = {
             </div>
 
             <div class="player-controls-bar">
+              <div class="player-controls-top${osdClockEnabled ? "" : " hidden"}">
+                <div id="playerClock" class="player-clock">--:--</div>
+                <div id="playerEndsAt" class="player-ends-at">${escapeHtml(t("player_ends_at", ["--:--"], "Ends at %1$s"))}</div>
+              </div>
               <div id="playerControlIcons" class="player-control-icons"></div>
               <div id="playerProgressShell" class="player-progress-shell focusable" tabindex="-1" data-player-pointer-action="progress">
                 <div class="player-progress-track">
