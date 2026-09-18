@@ -66,11 +66,14 @@ const DEFAULTS = {
   // text itself. Users can still switch back in Playback settings.
   subtitleRenderMode: "html",
   subtitleStyle: {
-    fontSize: 100,
+    fontSize: 82,
     textColor: "#FFFFFF",
     textOpacity: SUBTITLE_TEXT_OPACITY_DEFAULT,
     bold: false,
-    outlineEnabled: true,
+    // Fork preset (SUBTITLE_FONT.md): no stroke, no background box — the legibility
+    // comes from four short shadows — and ~3.6% of the canvas height, which is 82% of
+    // this app's own default scale.
+    outlineEnabled: false,
     outlineColor: "#000000",
     backgroundColor: "#00000000",
     verticalOffset: SUBTITLE_VERTICAL_OFFSET_DEFAULT,

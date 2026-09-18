@@ -10387,7 +10387,9 @@ export const PlayerScreen = {
       ? Environment.isWebOS()
         ? `-2px -2px 0 ${outlineColor}, 0 -2px 0 ${outlineColor}, 2px -2px 0 ${outlineColor}, -2px 0 0 ${outlineColor}, 2px 0 0 ${outlineColor}, -2px 2px 0 ${outlineColor}, 0 2px 0 ${outlineColor}, 2px 2px 0 ${outlineColor}`
         : `0 0 2px ${outlineColor}, 0 0 4px ${outlineColor}`
-      : "";
+      : // Fork preset: with the stroke off the caption is held by four short shadows
+        // (SUBTITLE_FONT.md: 0 1px 2px, 1px 0 1px, -1px 0 1px, 0 -1px 1px at 1080p).
+        "0 1px 2px #000000, 1px 0 1px rgba(0, 0, 0, 0.9), -1px 0 1px rgba(0, 0, 0, 0.9), 0 -1px 1px rgba(0, 0, 0, 0.75)";
     const subtitleShadow = [outlineShadow, boldShadow].filter(Boolean).join(", ") || "none";
     const subtitleFontSize = normalizeSubtitleFontSize(style.fontSize);
     const htmlSubtitleFontSize = formatHtmlSubtitleFontSize(subtitleFontSize);

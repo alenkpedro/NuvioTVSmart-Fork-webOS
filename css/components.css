@@ -12840,7 +12840,9 @@ html.legacy-webos .debug-console-log-frame {
   font-weight: var(--player-subtitle-font-weight);
   /* Single-weight faces: never let the TV fake a bold out of the Regular one. */
   font-synthesis: none;
-  line-height: 1.28;
+  /* Fork preset: tighter leading and slightly condensed tracking. */
+  line-height: 1.16;
+  letter-spacing: -0.015em;
   text-align: center;
   text-shadow: none;
   pointer-events: none;
@@ -26116,6 +26118,16 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
   align-items: center;
   justify-content: flex-end;
   gap: min(0.42vw, 8px); /* ATV 4dp -> 8px (fork icon gap) */
+}
+
+/* Fork caption preset: 78% max width and a 6.5% bottom margin when the controls are
+   hidden (the app already lifts the caption above the bar when they are open). */
+#playerUiRoot .player-html-subtitle-cue {
+  max-width: 78%;
+}
+
+#playerUiRoot .player-html-subtitle-default {
+  bottom: 6.5%;
 }
 
 #playerUiRoot .player-controls-row {
