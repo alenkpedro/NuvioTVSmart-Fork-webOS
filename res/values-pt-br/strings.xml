@@ -741,6 +741,8 @@
     <string name="autoplay_mode_manual_desc">Escolha sempre a fonte na lista exibida.</string>
     <string name="autoplay_mode_first_desc">Reproduza a primeira fonte disponível.</string>
     <string name="autoplay_mode_regex_desc">Reproduza fonte que coincidir com as palavras-chave (Regex).</string>
+    <string name="autoplay_mode_quality_rank">Melhor fonte pelo ranking do fork</string>
+    <string name="autoplay_mode_quality_rank_desc">Reproduza a fonte que o ranking de qualidade do fork coloca em primeiro: resolução, qualidade, grupo de release preferido, áudio e tamanho.</string>
     <string name="autoplay_scope_all_desc">Use tanto addons quanto plugins.</string>
     <string name="autoplay_scope_addons_desc">Considere apenas fontes de addons instalados.</string>
     <string name="autoplay_scope_plugins_desc">Considere apenas fontes de plugins ativos.</string>
@@ -2350,6 +2352,9 @@
     <string name="debrid_picker_excluded_languages_subtitle">Ocultar vídeos onde todos os idiomas disponíveis foram excluídos.</string>
     <string name="debrid_picker_required_release_groups_title">Grupos de release obrigatórios</string>
     <string name="debrid_picker_required_release_groups_subtitle">Exibir apenas os grupos de release selecionados.</string>
+    <string name="debrid_picker_preferred_release_groups_title">Grupos de release preferidos</string>
+    <string name="debrid_picker_preferred_release_groups_subtitle">Ordena o ranking de qualidade e a ordenação por grupo. Um grupo por linha, do melhor para o pior; grupos não listados ficam por último.</string>
+    <string name="debrid_stream_release_groups_preferred">Grupos de release preferidos</string>
     <string name="debrid_picker_excluded_release_groups_title">Grupos de release excluídos</string>
     <string name="debrid_picker_excluded_release_groups_subtitle">Ocultar os grupos de release selecionados.</string>
     <string name="debrid_selection_count_any">Qualquer</string>

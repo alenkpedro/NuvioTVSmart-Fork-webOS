@@ -3,10 +3,15 @@
 // streams shown in the picker and the user's auto-play settings, it returns the
 // stream that should play automatically, or null to leave the picker open.
 
+import { bestRankedStream } from "./streamQualityRank.js";
+
 export const STREAM_AUTO_PLAY_MODE = {
   MANUAL: "MANUAL",
   FIRST_STREAM: "FIRST_STREAM",
-  REGEX_MATCH: "REGEX_MATCH"
+  REGEX_MATCH: "REGEX_MATCH",
+  // ysosrs123/NuvioTV-Fork adds this fourth mode (StreamAutoPlayMode.QUALITY_RANK):
+  // play the best source according to the fork's quality ranking.
+  QUALITY_RANK: "QUALITY_RANK"
 };
 
 export const STREAM_AUTO_PLAY_SOURCE = {
@@ -59,6 +64,9 @@ export function isAutoPlayEffectivelyEnabled(settings = {}) {
   }
   const mode = normalizeMode(settings.streamAutoPlayMode);
   if (mode === STREAM_AUTO_PLAY_MODE.FIRST_STREAM) {
+    return true;
+  }
+  if (mode === STREAM_AUTO_PLAY_MODE.QUALITY_RANK) {
     return true;
   }
   if (mode === STREAM_AUTO_PLAY_MODE.REGEX_MATCH) {
@@ -193,6 +201,16 @@ export function selectAutoPlayStream(streams, options = {}) {
 
   if (mode === STREAM_AUTO_PLAY_MODE.FIRST_STREAM) {
     return candidates.find((stream) => isPlayableStream(stream)) || null;
+  }
+
+  // QUALITY_RANK: the fork's StreamQualityRank decides, using the user's debrid
+  // stream preferences (preferred/excluded resolutions, qualities, tags, groups).
+  if (mode === STREAM_AUTO_PLAY_MODE.QUALITY_RANK) {
+    const playable = candidates.filter((stream) => isPlayableStream(stream));
+    if (!playable.length) {
+      return null;
+    }
+    return bestRankedStream(playable, options.rankPreferences || {});
   }
 
   // REGEX_MATCH

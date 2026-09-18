@@ -407,6 +407,12 @@ const STREAM_AUTOPLAY_MODE_OPTIONS = [
     labelKey: "autoplay_mode_regex",
     captionKey: "autoplay_mode_regex_desc",
     label: "Auto-play regex match"
+  },
+  {
+    id: "QUALITY_RANK",
+    labelKey: "autoplay_mode_quality_rank",
+    captionKey: "autoplay_mode_quality_rank_desc",
+    label: "Best ranked source"
   }
 ];
 
@@ -1373,6 +1379,13 @@ function debridRuleRows(preferences = {}) {
       subtitleKey: "debrid_picker_excluded_languages_subtitle",
       dialogTitleKey: "debrid_stream_languages_excluded",
       options: debridOptionList(DEBRID_STREAM_LANGUAGES)
+    },
+    {
+      field: "preferredReleaseGroups",
+      titleKey: "debrid_picker_preferred_release_groups_title",
+      subtitleKey: "debrid_picker_preferred_release_groups_subtitle",
+      dialogTitleKey: "debrid_stream_release_groups_preferred",
+      textList: true
     },
     {
       field: "requiredReleaseGroups",

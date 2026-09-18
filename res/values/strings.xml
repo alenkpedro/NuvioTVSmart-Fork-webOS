@@ -768,6 +768,8 @@
     <string name="autoplay_mode_manual_desc">Always show source list and let me choose.</string>
     <string name="autoplay_mode_first_desc">Play the first available source automatically.</string>
     <string name="autoplay_mode_regex_desc">Play first source whose text matches your regex pattern.</string>
+    <string name="autoplay_mode_quality_rank">Best ranked source (fork ranking)</string>
+    <string name="autoplay_mode_quality_rank_desc">Play the source the fork quality ranking puts first: resolution, quality, preferred release group, audio and size.</string>
     <string name="autoplay_scope_all_desc">Auto-play can use both installed addons and enabled plugins.</string>
     <string name="autoplay_scope_addons_desc">Auto-play only considers streams coming from your installed addons.</string>
     <string name="autoplay_scope_plugins_desc">Auto-play only considers streams coming from enabled plugins.</string>
@@ -2555,6 +2557,9 @@
     <string name="debrid_picker_excluded_languages_subtitle">Hide streams where every language is excluded.</string>
     <string name="debrid_picker_required_release_groups_title">Required release groups</string>
     <string name="debrid_picker_required_release_groups_subtitle">Only show selected release groups.</string>
+    <string name="debrid_picker_preferred_release_groups_title">Preferred release groups</string>
+    <string name="debrid_picker_preferred_release_groups_subtitle">Order the quality ranking and the release-group sort. One group per line, best first; groups not listed rank last.</string>
+    <string name="debrid_stream_release_groups_preferred">Preferred release groups</string>
     <string name="debrid_picker_excluded_release_groups_title">Excluded release groups</string>
     <string name="debrid_picker_excluded_release_groups_subtitle">Hide selected release groups.</string>
     <string name="debrid_selection_count_any">Any</string>

@@ -1,4 +1,5 @@
 import { createProfileScopedStore } from "./profileScopedStore.js";
+import { FORK_PREFERRED_RELEASE_GROUPS } from "../../core/streams/releaseGroupPreferences.js";
 
 const KEY = "debridSettings";
 const LEGACY_STREAM_DESCRIPTION_TEMPLATE =
@@ -182,6 +183,9 @@ export const DEFAULT_STREAM_PREFERENCES = Object.freeze({
   excludedLanguages: [],
   requiredReleaseGroups: [],
   excludedReleaseGroups: [],
+  // Fork ladder (ysosrs123/NuvioTV-Fork DebridSettings.kt): the release groups the
+  // quality ranking and the RELEASE_GROUP sort key prefer, best first.
+  preferredReleaseGroups: [...FORK_PREFERRED_RELEASE_GROUPS],
   sortCriteria: DEFAULT_SORT_CRITERIA
 });
 
@@ -392,6 +396,12 @@ export function normalizeDebridStreamPreferences(value) {
     ),
     requiredReleaseGroups: normalizeTextList(source.requiredReleaseGroups),
     excludedReleaseGroups: normalizeTextList(source.excludedReleaseGroups),
+    // An empty ladder restores the fork defaults, the same rule the enum-backed
+    // preference lists above already follow.
+    preferredReleaseGroups: (() => {
+      const groups = normalizeTextList(source.preferredReleaseGroups);
+      return groups.length ? groups : [...DEFAULT_STREAM_PREFERENCES.preferredReleaseGroups];
+    })(),
     sortCriteria: normalizeSortCriteria(source.sortCriteria)
   };
 }

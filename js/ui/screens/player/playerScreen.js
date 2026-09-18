@@ -71,6 +71,7 @@ import { Router } from "../../navigation/router.js";
 import { renderLoadingIndicator } from "../../components/loadingIndicator.js";
 import { DirectDebridResolver } from "../../../core/debrid/directDebridResolver.js";
 import { DebridStreamPresentation } from "../../../core/debrid/directDebridStreamPresentation.js";
+import { DebridSettingsStore } from "../../../data/local/debridSettingsStore.js";
 import { TrackingScrobbleService } from "../../../data/repository/trackingScrobbleService.js";
 import { WebOsEngineFsResolver } from "../../../core/p2p/webosEngineFsResolver.js";
 import { TizenStreamingServerResolver } from "../../../core/p2p/tizenStreamingServerResolver.js";
@@ -9962,7 +9963,10 @@ export const PlayerScreen = {
       selectedPlugins: shouldAutoSelectInManualMode ? [] : settings.streamAutoPlaySelectedPlugins,
       preferredBingeGroup,
       preferBingeGroupInSelection: preferBingeGroup,
-      bingeGroupOnly: Boolean(options.bingeGroupOnly || bingeGroupOnlyManualMode)
+      bingeGroupOnly: Boolean(options.bingeGroupOnly || bingeGroupOnlyManualMode),
+      // QUALITY_RANK (fork): the same stream preferences the Direct Debrid list
+      // edits, so the ranking and the visible list stay in step.
+      rankPreferences: DebridSettingsStore.get()?.streamPreferences || {}
     });
   },
 

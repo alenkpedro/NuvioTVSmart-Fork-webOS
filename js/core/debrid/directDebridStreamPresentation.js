@@ -3,6 +3,7 @@ import { DebridProviders } from "./debridProviders.js";
 import { DebridStreamTemplateEngine } from "./debridStreamTemplateEngine.js";
 import { sizeBytesFromStreamText } from "./streamTextSizeParser.js";
 import { resolutionFromFields } from "./streamResolution.js";
+import { releaseGroupRank } from "../streams/releaseGroupPreferences.js";
 
 const RESOLUTION_LABELS = {
   P2160: "2160p",
@@ -431,6 +432,32 @@ function facts(stream = {}) {
   };
 }
 
+// The same fact extraction the Direct Debrid list uses, exported so the
+// auto-play ranking (StreamQualityRank) ranks on identical data.
+export function buildStreamFacts(stream = {}) {
+  return facts(stream);
+}
+
+// Exclusion-only view of matchesFilters: StreamQualityRank drops the streams the
+// user excluded and falls back to the whole pool when that empties it, while the
+// required/SIZE floors stay a list-level concern. Neutralising the requirement
+// fields here keeps a single implementation of the filters in this file.
+export function passesExclusionFilters(fact, preferences = {}) {
+  return matchesFilters(fact, {
+    ...preferences,
+    requiredResolutions: [],
+    requiredQualities: [],
+    requiredVisualTags: [],
+    requiredAudioTags: [],
+    requiredAudioChannels: [],
+    requiredEncodes: [],
+    requiredLanguages: [],
+    requiredReleaseGroups: [],
+    sizeMinGb: 0,
+    sizeMaxGb: 0
+  });
+}
+
 function effectiveSettings(settings = {}) {
   const preferences =
     settings.streamPreferences && typeof settings.streamPreferences === "object"
@@ -667,10 +694,25 @@ function compareKey(leftFact, rightFact, criterion = {}, preferences = {}) {
           rankAny(rightFact.languages, preferences.preferredLanguages)) *
         -direction
       );
-    case "RELEASE_GROUP":
+    case "RELEASE_GROUP": {
+      // Fork ladder (DebridStreamPreferences.preferredReleaseGroups): a listed
+      // group beats an unlisted one, and only equal ranks fall back to the
+      // alphabetical order the official app used before the ladder existed.
+      const leftGroupRank = releaseGroupRank(
+        leftFact.releaseGroup,
+        preferences.preferredReleaseGroups
+      );
+      const rightGroupRank = releaseGroupRank(
+        rightFact.releaseGroup,
+        preferences.preferredReleaseGroups
+      );
+      if (leftGroupRank !== rightGroupRank) {
+        return (leftGroupRank - rightGroupRank) * -direction;
+      }
       return String(leftFact.releaseGroup || "").localeCompare(
         String(rightFact.releaseGroup || "")
       );
+    }
     default:
       return 0;
   }
