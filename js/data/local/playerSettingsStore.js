@@ -60,7 +60,11 @@ const DEFAULTS = {
   stillWatchingEnabled: false,
   stillWatchingEpisodeThreshold: 3,
   osdClockEnabled: true,
-  subtitleRenderMode: "native",
+  // The bundled fork face (Netflix Sans) can only be applied by the app's own
+  // caption layer: in "native" the TV draws the cues and no CSS reaches them, which
+  // is the same limitation the webOS port documented before it started drawing the
+  // text itself. Users can still switch back in Playback settings.
+  subtitleRenderMode: "html",
   subtitleStyle: {
     fontSize: 100,
     textColor: "#FFFFFF",
