@@ -131,6 +131,31 @@ miniaturas do seek, modo de auto-play por ranking, ranking do fork e transferên
 biblioteca — além da fonte Netflix Sans (visual) e da identidade dos Ajustes (decisão
 do usuário).
 
+## Design do player: fork x base oficial (medido)
+
+O oficial já deriva da mesma linhagem Android e converte os valores do Android TV
+com o mesmo fator ×2 (`#playerUiRoot { --player-controls-x: min(3.33vw, 64px) /* ATV
+32dp -> 64px */ ... }`, em `css/components.css`). Comparando com a especificação que
+o port antigo transcreveu de `PlayerScreen.kt` (`webos/PLAYER_PARITY.md`):
+
+| Item                              | Fork (dp → px a 1080p)                                                | Base oficial hoje                                                        | Diferença                  |
+| --------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| Margem horizontal da barra        | 32 dp → 64 px                                                         | `--player-controls-x: min(3.33vw, 64px)`                                 | igual                      |
+| Margem inferior da barra          | 48 dp → 96 px                                                         | `--player-controls-y: min(2.5vw, 48px)` (24 dp)                          | **metade**                 |
+| Círculo de ícone / ícone          | 48 dp / 28 dp → 96 / 56 px                                            | 96 px / 48 px (24 dp)                                                    | ícone 8 px menor           |
+| Linha do tempo (traço / foco)     | 3 dp / 8 dp → 6 / 16 px                                               | 6 px (3 dp) / 20 px (foco 10 dp)                                         | foco mais alto             |
+| Marcador da linha do tempo        | 12 dp → 24 px                                                         | não encontrado com esse nome                                             | conferir                   |
+| Painel de fontes dentro do player | 440 dp → 880 px, preto 85%, raio 16 dp → 32 px, padding 16 dp → 32 px | `.player-sources-panel` 520 px, raio 16 px, fundo elevado, padding 24 px | **bem menor e mais claro** |
+| Painéis de áudio/legenda          | 320 dp → 640 px, raio 20 dp → 40 px                                   | medida não localizada pelo nome do port                                  | conferir                   |
+| Gradientes (topo / base)          | 150 dp / 200 dp → 300 / 400 px                                        | há gradiente no overlay de carregamento                                  | conferir                   |
+| Logo do título na barra           | máx 340×72 dp → 680×144 px                                            | `.player-title` sem limite equivalente                                   | conferir                   |
+
+Conclusão: a **estrutura** da barra (título/logo, ícones à direita, Mais, linha do
+tempo com buffer, cápsulas, relógio/término, painéis) já existe na base oficial; o que
+difere são **valores medidos** — sobretudo a margem inferior, o tamanho do painel de
+fontes e o ícone das cápsulas. Ajustar esses valores é a próxima rodada do design, e
+cada troca precisa de conferência na TV (é aparência, não regra).
+
 ## Rodadas
 
 1. **Buffer e rede (feito nesta rodada)**
