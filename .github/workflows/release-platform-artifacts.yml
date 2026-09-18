@@ -73,7 +73,7 @@ jobs:
           TAG_NAME: ${{ needs.resolve-release-payload.outputs.tag }}
         run: |
           VERSION="${TAG_NAME#v}"
-          set -- space.nuvio.webos_*_all.ipk
+          set -- org.nuviofork.webos_*_all.ipk
           if [ ! -e "$1" ]; then
             echo "Expected webOS package was not created" >&2
             exit 1

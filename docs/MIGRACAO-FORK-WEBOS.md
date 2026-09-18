@@ -23,15 +23,15 @@ referência de comportamento, textos e regras portadas do fork.
 
 ## Estado dos dois projetos
 
-|               | Projeto antigo (port)                                            | Base nova                                                   |
-| ------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- |
-| Origem        | `ysosrs123/NuvioTV-Fork` @ `45e0984`                             | `NuvioMedia/NuvioTVSmart`                                   |
-| Ramo/commit   | `codex/lg-webos-ut8050` @ `66b8031`                              | `main` @ `fcac952`                                          |
-| Versão        | prévia webOS 0.31.0                                              | 1.1.2 (release 09/09/2026)                                  |
-| Caminho local | `work/NuvioTV-Fork/webos`                                        | `work/NuvioTVSmart-fork`                                    |
-| Publicação    | `alenkpedro/NuvioTV-Fork-webOS` (tags `webos-v0.1.0`..`v0.31.0`) | ainda sem fork próprio                                      |
-| ID do app     | `org.nuviofork.webos`                                            | `space.nuvio.webos` (+ serviço `space.nuvio.webos.service`) |
-| Build         | `npm run build` / `npm run package:webos`                        | `npm run build` / `npm run package:webos`                   |
+|               | Projeto antigo (port)                                            | Base nova                                                                                                                                       |
+| ------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Origem        | `ysosrs123/NuvioTV-Fork` @ `45e0984`                             | `NuvioMedia/NuvioTVSmart`                                                                                                                       |
+| Ramo/commit   | `codex/lg-webos-ut8050` @ `66b8031`                              | `main` @ `fcac952`                                                                                                                              |
+| Versão        | prévia webOS 0.31.0                                              | 1.1.2 (release 09/09/2026)                                                                                                                      |
+| Caminho local | `work/NuvioTV-Fork/webos`                                        | `work/NuvioTVSmart-fork`                                                                                                                        |
+| Publicação    | `alenkpedro/NuvioTV-Fork-webOS` (tags `webos-v0.1.0`..`v0.31.0`) | ainda sem fork próprio                                                                                                                          |
+| ID do app     | `org.nuviofork.webos` (0.31.0)                                   | `org.nuviofork.webos` + `org.nuviofork.webos.service` / `.plugin.service`; o id oficial `space.nuvio.webos` **não** é mais usado (versão 1.1.3) |
+| Build         | `npm run build` / `npm run package:webos`                        | `npm run build` / `npm run package:webos`                                                                                                       |
 
 Backup do projeto antigo: `backups/2026-09-17/` (`nuvio-fork-all-refs.bundle` com o
 histórico completo, `nuvio-fork-webos-0.31.0-src.tar.gz`, `nuvio-smart-official-clone-1.1.2.tar.gz`
