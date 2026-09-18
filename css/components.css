@@ -26113,6 +26113,48 @@ html.tizen-tv #player.post-play-visible .tizen-avplay-object {
    subtitles, sources, More) sits above the timeline, right aligned; the playback
    capsules stay under it. The markup already carries that order, so this only
    stacks and aligns the three rows. */
+/* Fork bar order, transcribed from the webOS port (player-ui.js + style.css at the
+   old x2 scale): the overlay stacks a top row (source chips + clock) and the bottom
+   bar, which holds the identity and the icon group on one line, the timeline, the
+   time row and the actions underneath. */
+#playerUiRoot .player-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: min(1.25vw, 24px);
+}
+
+#playerUiRoot .player-meta-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: min(0.83vw, 16px);
+}
+
+/* The clock row belongs to the top block (right side), not to the bar. */
+#playerUiRoot .player-controls-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: min(0.83vw, 16px);
+  text-align: right;
+}
+
+#playerUiRoot .player-title-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: min(1.25vw, 24px);
+}
+
+#playerUiRoot .player-progress-shell {
+  margin-top: 0;
+}
+
+#playerUiRoot .player-time-label {
+  align-self: flex-start;
+}
+
 #playerUiRoot .player-controls-bar {
   display: flex;
   flex-direction: column;

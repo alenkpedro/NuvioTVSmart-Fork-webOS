@@ -7410,19 +7410,25 @@ export const PlayerScreen = {
           <div class="player-controls-gradient player-controls-gradient-top"></div>
           <div class="player-controls-gradient player-controls-gradient-bottom"></div>
 
+          <div class="player-top">
+            <div id="playerMetaChips" class="player-meta-chips" aria-label="${escapeAttribute(t("player_source_info", {}, "Source information"))}"></div>
+            <div class="player-controls-top${osdClockEnabled ? "" : " hidden"}">
+              <div id="playerClock" class="player-clock">--:--</div>
+              <div id="playerEndsAt" class="player-ends-at">${escapeHtml(t("player_ends_at", ["--:--"], "Ends at %1$s"))}</div>
+            </div>
+          </div>
+
           <div class="player-controls-bottom">
-            <div class="player-meta">
-              <div class="player-title">${escapeHtml(header.title)}</div>
-              ${header.subtitle ? `<div class="player-subtitle">${escapeHtml(header.subtitle)}</div>` : ""}
-              ${header.meta ? `<div class="player-meta-tertiary">${escapeHtml(header.meta)}</div>` : ""}
+            <div class="player-title-actions">
+              <div class="player-meta">
+                <div class="player-title">${escapeHtml(header.title)}</div>
+                ${header.subtitle ? `<div class="player-subtitle">${escapeHtml(header.subtitle)}</div>` : ""}
+                ${header.meta ? `<div class="player-meta-tertiary">${escapeHtml(header.meta)}</div>` : ""}
+              </div>
+              <div id="playerControlIcons" class="player-control-icons"></div>
             </div>
 
             <div class="player-controls-bar">
-              <div class="player-controls-top${osdClockEnabled ? "" : " hidden"}">
-                <div id="playerClock" class="player-clock">--:--</div>
-                <div id="playerEndsAt" class="player-ends-at">${escapeHtml(t("player_ends_at", ["--:--"], "Ends at %1$s"))}</div>
-              </div>
-              <div id="playerControlIcons" class="player-control-icons"></div>
               <div id="playerProgressShell" class="player-progress-shell focusable" tabindex="-1" data-player-pointer-action="progress">
                 <div class="player-progress-track">
                   <div id="playerProgressBuffered" class="player-progress-buffered"></div>
@@ -7430,9 +7436,10 @@ export const PlayerScreen = {
                 </div>
               </div>
 
+              <div id="playerTimeLabel" class="player-time-label">0:00 / 0:00</div>
+
               <div class="player-controls-row">
                 <div id="playerControlButtons" class="player-control-buttons"></div>
-                <div id="playerTimeLabel" class="player-time-label">0:00 / 0:00</div>
               </div>
             </div>
           </div>
@@ -7511,7 +7518,7 @@ export const PlayerScreen = {
           endsAt: uiRoot.querySelector("#playerEndsAt"),
           progressBuffered: uiRoot.querySelector("#playerProgressBuffered"),
           progressFill: uiRoot.querySelector("#playerProgressFill"),
-          controlButtons: uiRoot.querySelector(".player-controls-bar"),
+          controlButtons: uiRoot.querySelector("#playerControlsOverlay"),
           controlIcons: uiRoot.querySelector("#playerControlIcons"),
           controlCapsules: uiRoot.querySelector("#playerControlButtons"),
           timeLabel: uiRoot.querySelector("#playerTimeLabel"),
