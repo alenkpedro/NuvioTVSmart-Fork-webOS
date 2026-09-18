@@ -2961,4 +2961,15 @@
     <string name="auth_qr_terms_prefix">By signing up / logging in, I agree to the</string>
     <string name="auth_qr_terms_link">Terms</string>
     <string name="auth_qr_manual_instruction">Or go to %1$s and enter</string>
+    <string name="playback_custom_buffer">Custom playback buffer</string>
+    <string name="playback_custom_buffer_sub">Choose how much the player buffers before starting and after a stall.</string>
+    <string name="playback_buffer_initial">Buffer before playback</string>
+    <string name="playback_buffer_initial_sub">Seconds to load before playback starts.</string>
+    <string name="playback_buffer_rebuffer">Buffer after a stall</string>
+    <string name="playback_buffer_rebuffer_sub">Seconds to hold after playback stalls, so it does not stutter back.</string>
+    <string name="playback_buffer_timeout">Buffer wait limit</string>
+    <string name="playback_buffer_timeout_sub">How long to wait for the buffer before starting anyway.</string>
+    <string name="playback_buffer_initial_title">Buffer before playback</string>
+    <string name="playback_buffer_rebuffer_title">Buffer after a stall</string>
+    <string name="playback_buffer_timeout_title">Buffer wait limit</string>
 </resources>

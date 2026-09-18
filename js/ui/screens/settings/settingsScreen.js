@@ -25,6 +25,13 @@ import {
   SUBTITLE_TEXT_OPACITY_STEP,
   normalizeSubtitleTextOpacity
 } from "../../../core/player/subtitleTextOpacity.js";
+import {
+  BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT,
+  BUFFER_INITIAL_SECONDS_DEFAULT,
+  BUFFER_SECONDS_MAX,
+  BUFFER_SECONDS_MIN,
+  BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT
+} from "../../../core/player/playbackBufferPolicy.js";
 import { TorrentSettingsStore } from "../../../data/local/torrentSettingsStore.js";
 import { WebOsAudioCompatibilityStore } from "../../../data/local/webOsAudioCompatibilityStore.js";
 import { LayoutPreferences } from "../../../data/local/layoutPreferences.js";
@@ -366,6 +373,21 @@ const SECONDARY_PLAYBACK_LANGUAGE_OPTIONS = [
   { id: "original", labelKey: "audio_lang_original", label: "Original language" },
   ...AVAILABLE_LANGUAGES
 ];
+
+// Fork custom playback buffer (Settings -> Playback -> Buffer and network).
+// Android exposes bufferForPlaybackMs and bufferForPlaybackAfterRebufferMs;
+// the TV runtimes receive the same preference in whole seconds.
+const CUSTOM_BUFFER_SECONDS_OPTIONS = Array.from(
+  { length: BUFFER_SECONDS_MAX - BUFFER_SECONDS_MIN + 1 },
+  (_, index) => {
+    const seconds = BUFFER_SECONDS_MIN + index;
+    return { id: String(seconds), label: `${seconds}s` };
+  }
+);
+const CUSTOM_BUFFER_TIMEOUT_SECONDS_OPTIONS = [5, 10, 15, 20, 25, 30, 45, 60].map((seconds) => ({
+  id: String(seconds),
+  label: `${seconds}s`
+}));
 
 const STREAM_AUTOPLAY_MODE_OPTIONS = [
   {
@@ -5864,6 +5886,43 @@ export const SettingsScreen = {
     togglePlayerSetting("playback:loadingOverlay", "loadingOverlayEnabled");
     togglePlayerSetting("playback:loadingStatus", "showPlayerLoadingStatus");
     togglePlayerSetting("playback:minimalBufferingUi", "minimalBufferingUiEnabled");
+    togglePlayerSetting("playback:customBuffer", "customBufferEnabled");
+    this.actionMap.set("playback:bufferInitial", () =>
+      this.openOptionDialog({
+        title: t("playback_buffer_initial_title", {}, "Buffer before playback"),
+        options: CUSTOM_BUFFER_SECONDS_OPTIONS,
+        selectedId: String(
+          PlayerSettingsStore.get().bufferInitialSeconds ?? BUFFER_INITIAL_SECONDS_DEFAULT
+        ),
+        returnFocusKey: "playback:bufferInitial",
+        onSelect: (option) => PlayerSettingsStore.set({ bufferInitialSeconds: Number(option.id) })
+      })
+    );
+    this.actionMap.set("playback:bufferAfterRebuffer", () =>
+      this.openOptionDialog({
+        title: t("playback_buffer_rebuffer_title", {}, "Buffer after a stall"),
+        options: CUSTOM_BUFFER_SECONDS_OPTIONS,
+        selectedId: String(
+          PlayerSettingsStore.get().bufferAfterRebufferSeconds ??
+            BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT
+        ),
+        returnFocusKey: "playback:bufferAfterRebuffer",
+        onSelect: (option) =>
+          PlayerSettingsStore.set({ bufferAfterRebufferSeconds: Number(option.id) })
+      })
+    );
+    this.actionMap.set("playback:bufferWaitTimeout", () =>
+      this.openOptionDialog({
+        title: t("playback_buffer_timeout_title", {}, "Buffer wait limit"),
+        options: CUSTOM_BUFFER_TIMEOUT_SECONDS_OPTIONS,
+        selectedId: String(
+          PlayerSettingsStore.get().bufferWaitTimeoutSeconds ?? BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT
+        ),
+        returnFocusKey: "playback:bufferWaitTimeout",
+        onSelect: (option) =>
+          PlayerSettingsStore.set({ bufferWaitTimeoutSeconds: Number(option.id) })
+      })
+    );
     togglePlayerSetting("playback:pauseOverlay", "pauseOverlayEnabled");
     togglePlayerSetting("playback:parentalGuide", "parentalGuideEnabled");
     ["intro", "recap", "outro"].forEach((type) =>
@@ -6451,6 +6510,50 @@ export const SettingsScreen = {
         ${this.renderToggleRow({ focusKey: "playback:loadingOverlay", title: t("playback_loading_overlay"), subtitle: t("playback_loading_overlay_sub"), checked: model.player.loadingOverlayEnabled !== false })}
         ${this.renderToggleRow({ focusKey: "playback:loadingStatus", title: t("playback_show_loading_status", {}, "Detailed loading status"), subtitle: t("playback_show_loading_status_sub", {}, "Show detailed player loading progress"), checked: model.player.showPlayerLoadingStatus !== false })}
         ${Platform.isWebOS() ? this.renderToggleRow({ focusKey: "playback:minimalBufferingUi", title: t("playback_minimal_buffering_ui", {}, "Minimal buffering UI"), subtitle: t("playback_minimal_buffering_ui_sub", {}, "Show only the spinner when playback buffers after it has started"), checked: Boolean(model.player.minimalBufferingUiEnabled) }) : ""}
+        ${this.renderToggleRow({
+          focusKey: "playback:customBuffer",
+          title: t("playback_custom_buffer", {}, "Custom playback buffer"),
+          subtitle: t(
+            "playback_custom_buffer_sub",
+            {},
+            "Choose how much the player buffers before starting and after a stall."
+          ),
+          checked: Boolean(model.player.customBufferEnabled)
+        })}
+        ${
+          model.player.customBufferEnabled
+            ? this.renderActionRow({
+                focusKey: "playback:bufferInitial",
+                title: t("playback_buffer_initial", {}, "Buffer before playback"),
+                subtitle: t(
+                  "playback_buffer_initial_sub",
+                  {},
+                  "Seconds to load before playback starts."
+                ),
+                value: `${model.player.bufferInitialSeconds ?? BUFFER_INITIAL_SECONDS_DEFAULT}s`
+              }) +
+              this.renderActionRow({
+                focusKey: "playback:bufferAfterRebuffer",
+                title: t("playback_buffer_rebuffer", {}, "Buffer after a stall"),
+                subtitle: t(
+                  "playback_buffer_rebuffer_sub",
+                  {},
+                  "Seconds to hold after playback stalls, so it does not stutter back."
+                ),
+                value: `${model.player.bufferAfterRebufferSeconds ?? BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT}s`
+              }) +
+              this.renderActionRow({
+                focusKey: "playback:bufferWaitTimeout",
+                title: t("playback_buffer_timeout", {}, "Buffer wait limit"),
+                subtitle: t(
+                  "playback_buffer_timeout_sub",
+                  {},
+                  "How long to wait for the buffer before starting anyway."
+                ),
+                value: `${model.player.bufferWaitTimeoutSeconds ?? BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT}s`
+              })
+            : ""
+        }
         ${this.renderToggleRow({ focusKey: "playback:pauseOverlay", title: t("playback_pause_overlay"), subtitle: t("playback_pause_overlay_sub"), checked: model.player.pauseOverlayEnabled !== false })}
         ${this.renderToggleRow({ focusKey: "playback:parentalGuide", title: t("playback_parental_guide"), subtitle: t("playback_parental_guide_sub"), checked: model.player.parentalGuideEnabled !== false })}
         ${["intro", "recap", "outro"].map((type) => this.renderToggleRow({ focusKey: `playback:autoSkip:${type}`, title: t(`auto_skip_${type}`, {}, `Auto-skip ${type}`), subtitle: t(`auto_skip_${type}_sub`, {}, `Skip ${type} segments automatically`), checked: model.player.autoSkipSegmentTypes?.includes(type) })).join("")}

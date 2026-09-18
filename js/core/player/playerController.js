@@ -23,6 +23,15 @@ import {
 import { WebOsLunaService } from "../../platform/webos/webosLunaService.js";
 import { subscribeWebOsCompanionService } from "../../platform/webos/webosCompanionService.js";
 import { WebOSPlayerExtensions } from "../../platform/webos/webosPlayerExtensions.js";
+import { PlayerSettingsStore } from "../../data/local/playerSettingsStore.js";
+import {
+  bufferedAheadSeconds,
+  bufferWaitTimeoutSeconds,
+  rebufferBufferTargetSeconds,
+  shouldHoldPlaybackForBuffer,
+  startupBufferTargetSeconds,
+  waitForPlaybackBuffer
+} from "./playbackBufferPolicy.js";
 import { loadStreamingLibs } from "../../runtime/loadStreamingLibs.js";
 import { WATCH_PROGRESS_UNKNOWN_DURATION_PERCENT } from "../../domain/model/watchProgress.js";
 import { parseAspectRatio } from "./playerAspect.js";
@@ -525,6 +534,9 @@ export const PlayerController = {
   startupAudioGateActive: false,
   startupAudioGatePausesNativePlayback: true,
   startupPresentationAudioMuted: false,
+  playbackBufferGateActive: false,
+  playbackBufferGateTargetSeconds: 0,
+  playbackBufferGateToken: 0,
   desiredPlaybackRate: 1,
   appliedAvPlayPlaybackRate: 1,
   appliedWebOsPlaybackRate: 1,
@@ -1220,6 +1232,111 @@ export const PlayerController = {
     if (nativePlaybackWasPausedForGate || this.video?.paused) {
       this.resumeNativePlaybackAfterStartupGate();
     }
+  },
+
+  // Fork custom buffer (Settings -> Playback -> Buffer and network). AVPlay
+  // keeps its own buffering parameters through configureAvPlayBuffering(), so
+  // this gate only runs on the HTML5 media path (native <video> and hls.js).
+  getPlaybackBufferPolicy() {
+    const settings = PlayerSettingsStore.get() || {};
+    return {
+      enabled: settings.customBufferEnabled === true,
+      initialSeconds: startupBufferTargetSeconds(settings),
+      afterRebufferSeconds: rebufferBufferTargetSeconds(settings),
+      waitTimeoutSeconds: bufferWaitTimeoutSeconds(settings)
+    };
+  },
+
+  getBufferedAheadSeconds() {
+    if (!this.video) {
+      return 0;
+    }
+    return bufferedAheadSeconds(this.video.buffered, Number(this.video.currentTime));
+  },
+
+  isPlaybackBufferGateActive() {
+    return this.playbackBufferGateActive === true;
+  },
+
+  resetPlaybackBufferGate() {
+    this.playbackBufferGateToken = Number(this.playbackBufferGateToken || 0) + 1;
+    this.playbackBufferGateActive = false;
+    this.playbackBufferGateTargetSeconds = 0;
+  },
+
+  /**
+   * Holds the element until the configured seconds are buffered ahead of the
+   * playhead, then resumes it. The startup target applies before the first
+   * second of playback and the after-rebuffer target everywhere else; the wait
+   * is always bounded so a slow source still starts and can rebuffer instead of
+   * sitting on a black screen. Returns the wait outcome for diagnostics.
+   */
+  async enforcePlaybackBufferGate({ reason = "startup", playToken = null } = {}) {
+    const policy = this.getPlaybackBufferPolicy();
+    if (!policy.enabled || !this.video || this.isUsingAvPlay() || this.video.ended) {
+      return "disabled";
+    }
+    const atStartup = !(Number(this.video.currentTime) > 0.5);
+    const targetSeconds = atStartup ? policy.initialSeconds : policy.afterRebufferSeconds;
+    if (!(targetSeconds > 0)) {
+      return "disabled";
+    }
+    if (
+      !shouldHoldPlaybackForBuffer({
+        targetSeconds,
+        bufferedAhead: this.getBufferedAheadSeconds()
+      })
+    ) {
+      return "ready";
+    }
+
+    const gateToken = Number(this.playbackBufferGateToken || 0) + 1;
+    this.playbackBufferGateToken = gateToken;
+    this.playbackBufferGateActive = true;
+    this.playbackBufferGateTargetSeconds = targetSeconds;
+    let pausedForGate = false;
+    try {
+      if (!this.video.paused) {
+        this.video.pause();
+        pausedForGate = true;
+        this.isPlaying = false;
+        this.syncWebOsPlaybackKeepAwake();
+      }
+    } catch (_) {
+      // A paused element is already the state this gate wants.
+    }
+
+    const outcome = await waitForPlaybackBuffer({
+      targetSeconds,
+      readBufferedAhead: () => this.getBufferedAheadSeconds(),
+      timeoutSeconds: policy.waitTimeoutSeconds,
+      isCancelled: () =>
+        gateToken !== this.playbackBufferGateToken ||
+        (playToken !== null && playToken !== this.playRequestToken)
+    });
+
+    this.playbackBufferGateActive = false;
+    this.playbackBufferGateTargetSeconds = 0;
+    if (outcome === "timeout") {
+      console.info("Custom playback buffer wait expired", {
+        reason,
+        targetSeconds,
+        waitedSeconds: policy.waitTimeoutSeconds,
+        bufferedAheadSeconds: this.getBufferedAheadSeconds(),
+        engine: this.playbackEngine
+      });
+    }
+    if (outcome === "cancelled" || !pausedForGate) {
+      return outcome;
+    }
+    // The startup audio gate owns the paused element until its track pass ends.
+    if (this.startupAudioGateActive || this.video.ended || !this.playbackSessionActive) {
+      return outcome;
+    }
+    if (this.video.paused) {
+      this.resumeNativePlaybackAfterStartupGate();
+    }
+    return outcome;
   },
 
   startPreparedAvPlayPlayback({ syncTracks = true } = {}) {
@@ -5399,6 +5516,13 @@ export const PlayerController = {
       // waits for the next real playing event before resuming the periodic job.
       this.saveProgressIfNeeded();
       this.stopProgressSaving();
+      // Fork custom buffer: hold the element until the resume target is met.
+      void this.enforcePlaybackBufferGate({ reason: "waiting" }).catch(() => {});
+    });
+    this.video.addEventListener("playing", () => {
+      // The same gate covers startup: the runtime starts the element (so it
+      // begins loading) and playback is held until the initial target arrives.
+      void this.enforcePlaybackBufferGate({ reason: "playing" }).catch(() => {});
     });
     ["playing", "timeupdate", "pause", "ended", "emptied"].forEach((eventName) => {
       this.video.addEventListener(eventName, () => this.clearHlsBufferStallWarning());
@@ -5941,6 +6065,7 @@ export const PlayerController = {
     this.playbackSessionActive = false;
     this.syncWebOsPlaybackKeepAwake();
     this.setStartupAudioGate(false, { resume: false });
+    this.resetPlaybackBufferGate();
 
     try {
       this.video.pause();

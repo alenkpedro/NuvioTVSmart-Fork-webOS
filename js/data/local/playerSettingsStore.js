@@ -8,6 +8,13 @@ import {
   SUBTITLE_TEXT_OPACITY_DEFAULT,
   normalizeSubtitleTextOpacity
 } from "../../core/player/subtitleTextOpacity.js";
+import {
+  BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT,
+  BUFFER_INITIAL_SECONDS_DEFAULT,
+  BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT,
+  normalizeBufferSeconds,
+  normalizeBufferWaitTimeoutSeconds
+} from "../../core/player/playbackBufferPolicy.js";
 
 const KEY = "playerSettings";
 
@@ -32,6 +39,13 @@ const DEFAULTS = {
   loadingOverlayEnabled: true,
   showPlayerLoadingStatus: true,
   minimalBufferingUiEnabled: false,
+  // Fork custom playback buffer (Android's bufferForPlaybackMs /
+  // bufferForPlaybackAfterRebufferMs and its buffering timeout). Off by default
+  // so every runtime keeps the behaviour it ships with today.
+  customBufferEnabled: false,
+  bufferInitialSeconds: BUFFER_INITIAL_SECONDS_DEFAULT,
+  bufferAfterRebufferSeconds: BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT,
+  bufferWaitTimeoutSeconds: BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT,
   pauseOverlayEnabled: true,
   parentalGuideEnabled: true,
   autoSkipSegmentTypes: [],
@@ -294,6 +308,21 @@ export function normalizePlayerSettings(settings = {}) {
     showPlayerLoadingStatus: persistentSettings.showPlayerLoadingStatus !== false,
     minimalBufferingUiEnabled: Boolean(
       persistentSettings.minimalBufferingUiEnabled ?? DEFAULTS.minimalBufferingUiEnabled
+    ),
+    customBufferEnabled: Boolean(
+      persistentSettings.customBufferEnabled ?? DEFAULTS.customBufferEnabled
+    ),
+    bufferInitialSeconds: normalizeBufferSeconds(
+      persistentSettings.bufferInitialSeconds,
+      BUFFER_INITIAL_SECONDS_DEFAULT
+    ),
+    bufferAfterRebufferSeconds: normalizeBufferSeconds(
+      persistentSettings.bufferAfterRebufferSeconds,
+      BUFFER_AFTER_REBUFFER_SECONDS_DEFAULT
+    ),
+    bufferWaitTimeoutSeconds: normalizeBufferWaitTimeoutSeconds(
+      persistentSettings.bufferWaitTimeoutSeconds,
+      BUFFER_WAIT_TIMEOUT_SECONDS_DEFAULT
     ),
     pauseOverlayEnabled: persistentSettings.pauseOverlayEnabled !== false,
     parentalGuideEnabled: persistentSettings.parentalGuideEnabled !== false,

@@ -2841,4 +2841,15 @@
     <string name="auth_qr_terms_prefix">Ao se cadastrar ou entrar, você concorda com os</string>
     <string name="auth_qr_terms_link">Termos</string>
     <string name="auth_qr_manual_instruction">Or go to %1$s and enter</string>
+    <string name="playback_custom_buffer">Buffer de reprodução personalizado</string>
+    <string name="playback_custom_buffer_sub">Escolha quanto o player carrega antes de começar e depois de uma travada.</string>
+    <string name="playback_buffer_initial">Buffer antes de reproduzir</string>
+    <string name="playback_buffer_initial_sub">Segundos carregados antes de a reprodução começar.</string>
+    <string name="playback_buffer_rebuffer">Buffer após travamento</string>
+    <string name="playback_buffer_rebuffer_sub">Segundos mantidos depois de uma travada, para não voltar aos soluços.</string>
+    <string name="playback_buffer_timeout">Limite de espera do buffer</string>
+    <string name="playback_buffer_timeout_sub">Quanto esperar pelo buffer antes de começar de qualquer forma.</string>
+    <string name="playback_buffer_initial_title">Buffer antes de reproduzir</string>
+    <string name="playback_buffer_rebuffer_title">Buffer após travamento</string>
+    <string name="playback_buffer_timeout_title">Limite de espera do buffer</string>
 </resources>
